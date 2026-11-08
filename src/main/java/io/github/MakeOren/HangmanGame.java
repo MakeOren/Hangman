@@ -7,18 +7,18 @@ import java.util.Set;
 
 public class HangmanGame {
 
+    private static final int MAX_FAILED_ATTEMPT = 6;
+    private final Set<Character> wrongGuesses;
     private String answer;
     private String hint;
     private Random random;
     private int failedAttemptCount;
     private boolean isWin;
     private boolean isGameOver;
-    private final static int MAX_FAILED_ATTEMPT = 6;
-    private final Set<Character> wrongGuessesSet;
 
 
     public HangmanGame(List<String> dictionary) {
-        this.wrongGuessesSet = new HashSet<>();
+        this.wrongGuesses = new HashSet<>();
         this.failedAttemptCount = 0;
         this.random = new Random();
         this.answer = dictionary.get(random.nextInt(0, dictionary.size()));
@@ -27,12 +27,12 @@ public class HangmanGame {
         this.isGameOver = false;
     }
 
-    public void makeMove(char userLetter) {
-        if (containsLetter(userLetter) && !hint.contains(String.valueOf(userLetter))) {
-            calculateHint(userLetter);
-        } else if(!containsWrongGuesses(userLetter) && !hint.contains(String.valueOf(userLetter))) {
-            failedAttemptCount += 1;
-            wrongGuessesSet.add(userLetter);
+    public void makeMove(char letter) {
+        if (containsLetter(letter) && !hint.contains(String.valueOf(letter))) {
+            updateHint(letter);
+        } else if(!containsWrongGuesses(letter) && !hint.contains(String.valueOf(letter))) {
+            failedAttemptCount ++;
+            wrongGuesses.add(letter);
         }
 
         updateWinStatus();
@@ -53,7 +53,7 @@ public class HangmanGame {
     }
 
     public String getHangman() {
-        return HangmanStage.getHangmanStage(failedAttemptCount);
+        return HangmanStage.get(failedAttemptCount);
     }
 
     public boolean isWin() {
@@ -64,12 +64,12 @@ public class HangmanGame {
         return isGameOver;
     }
 
-    private void calculateHint(char userLetter) {
+    private void updateHint(char letter) {
         StringBuilder hintBuilder = new StringBuilder(hint);
 
         for (int i = 0; i < answer.length(); i++) {
-            if(answer.charAt(i) == userLetter) {
-                hintBuilder.setCharAt(i, userLetter);
+            if(answer.charAt(i) == letter) {
+                hintBuilder.setCharAt(i, letter);
             }
         }
 
@@ -81,7 +81,7 @@ public class HangmanGame {
     }
 
     private boolean containsWrongGuesses(char letter) {
-        return wrongGuessesSet.contains(letter);
+        return wrongGuesses.contains(letter);
     }
 
     private void updateWinStatus() {
@@ -98,58 +98,65 @@ public class HangmanGame {
 
     private static class HangmanStage {
         private static final String[] STAGES = {
-                "  +---+\n" +
-                        "  |   |\n" +
-                        "      |\n" +
-                        "      |\n" +
-                        "      |\n" +
-                        "      |\n" +
-                        "=========",
-                "  +---+\n" +
-                        "  |   |\n" +
-                        "  O   |\n" +
-                        "      |\n" +
-                        "      |\n" +
-                        "      |\n" +
-                        "=========",
-                "  +---+\n" +
-                        "  |   |\n" +
-                        "  O   |\n" +
-                        "  |   |\n" +
-                        "      |\n" +
-                        "      |\n" +
-                        "=========",
-                "  +---+\n" +
-                        "  |   |\n" +
-                        "  O   |\n" +
-                        " /|   |\n" +
-                        "      |\n" +
-                        "      |\n" +
-                        "=========",
-                "  +---+\n" +
-                        "  |   |\n" +
-                        "  O   |\n" +
-                        " /|\\  |\n" +
-                        "      |\n" +
-                        "      |\n" +
-                        "=========",
-                "  +---+\n" +
-                        "  |   |\n" +
-                        "  O   |\n" +
-                        " /|\\  |\n" +
-                        " /    |\n" +
-                        "      |\n" +
-                        "=========",
-                "  +---+\n" +
-                        "  |   |\n" +
-                        "  O   |\n" +
-                        " /|\\  |\n" +
-                        " / \\  |\n" +
-                        "      |\n" +
-                        "========="
+                """
+              +---+
+              |   |
+                  |
+                  |
+                  |
+                  |
+            =========""",
+                """
+              +---+
+              |   |
+              O   |
+                  |
+                  |
+                  |
+            =========""",
+                """
+              +---+
+              |   |
+              O   |
+              |   |
+                  |
+                  |
+            =========""",
+                """
+              +---+
+              |   |
+              O   |
+             /|   |
+                  |
+                  |
+            =========""",
+                """
+              +---+
+              |   |
+              O   |
+             /|\\  |
+                  |
+                  |
+            =========""",
+                """
+              +---+
+              |   |
+              O   |
+             /|\\  |
+             /    |
+                  |
+            =========""",
+                """
+              +---+
+              |   |
+              O   |
+             /|\\  |
+             / \\  |
+                  |
+            ========="""
         };
 
-        private static String getHangmanStage(int countError) {
+        private static String get(int countError) {
             return STAGES[countError];
         }
     }
