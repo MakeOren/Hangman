@@ -58,7 +58,9 @@ public class Hangman {
 
         if (hangmanGame.isWin()) {
             HangmanConsole.printWin(hangmanGame.getAnswer());
-        } else {
+        }
+
+        if (hangmanGame.isLose()) {
             HangmanConsole.printLose(hangmanGame.getAnswer());
         }
     }

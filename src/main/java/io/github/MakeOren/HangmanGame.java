@@ -9,35 +9,27 @@ public class HangmanGame {
 
     private static final int MAX_FAILED_ATTEMPT = 6;
     private final Set<Character> wrongGuesses;
-    private String answer;
+    private final String answer;
     private String hint;
-    private Random random;
-    private int failedAttemptCount;
-    private boolean isWin;
-    private boolean isGameOver;
 
 
     public HangmanGame(List<String> dictionary) {
         this.wrongGuesses = new HashSet<>();
-        this.failedAttemptCount = 0;
-        this.random = new Random();
+        Random random = new Random();
         this.answer = dictionary.get(random.nextInt(0, dictionary.size()));
         this.hint = "*".repeat(answer.length());
-        this.isWin = false;
-        this.isGameOver = false;
     }
 
     public void makeMove(char letter) {
-        if (containsLetter(letter) && !hint.contains(String.valueOf(letter))) {
-            updateHint(letter);
-        } else if(!containsWrongGuesses(letter) && !hint.contains(String.valueOf(letter))) {
-            failedAttemptCount ++;
-            wrongGuesses.add(letter);
+        if (isLetterEntered(letter)) {
+            return;
         }
 
-        updateWinStatus();
-        updateGameOver();
-
+        if (answerContainsLetter(letter)) {
+            updateHint(letter);
+        } else {
+            wrongGuesses.add(letter);
+        }
     }
 
     public String getHint() {
@@ -49,26 +41,30 @@ public class HangmanGame {
     }
 
     public int getFailedAttemptCount() {
-        return failedAttemptCount;
+        return wrongGuesses.size();
     }
 
     public String getHangman() {
-        return HangmanStage.get(failedAttemptCount);
+        return HangmanStage.get(getFailedAttemptCount());
     }
 
     public boolean isWin() {
-        return isWin;
+        return hint.equals(answer);
+    }
+
+    public boolean isLose() {
+        return getFailedAttemptCount() >= MAX_FAILED_ATTEMPT;
     }
 
     public boolean isGameOver() {
-        return isGameOver;
+        return isWin() || isLose();
     }
 
     private void updateHint(char letter) {
         StringBuilder hintBuilder = new StringBuilder(hint);
 
         for (int i = 0; i < answer.length(); i++) {
-            if(answer.charAt(i) == letter) {
+            if (answer.charAt(i) == letter) {
                 hintBuilder.setCharAt(i, letter);
             }
         }
@@ -76,24 +72,12 @@ public class HangmanGame {
         hint = hintBuilder.toString();
     }
 
-    private boolean containsLetter(char letter) {
-        return answer.contains(Character.toString(letter));
+    private boolean isLetterEntered(char letter) {
+        return hint.contains(String.valueOf(letter)) || wrongGuesses.contains(letter);
     }
 
-    private boolean containsWrongGuesses(char letter) {
-        return wrongGuesses.contains(letter);
-    }
-
-    private void updateWinStatus() {
-        if (hint.equals(answer)) {
-            isWin = true;
-        }
-    }
-
-    private void updateGameOver() {
-        if (isWin || failedAttemptCount >= MAX_FAILED_ATTEMPT) {
-            isGameOver = true;
-        }
+    private boolean answerContainsLetter(char letter) {
+        return answer.contains(String.valueOf(letter));
     }
 
     private static class HangmanStage {
