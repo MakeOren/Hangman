@@ -1,6 +1,6 @@
 package io.github.MakeOren;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -14,7 +14,7 @@ public class HangmanGame {
 
 
     public HangmanGame(List<String> dictionary) {
-        this.wrongGuesses = new HashSet<>();
+        this.wrongGuesses = new LinkedHashSet<>();
         Random random = new Random();
         this.answer = dictionary.get(random.nextInt(0, dictionary.size()));
         this.hint = "*".repeat(answer.length());
@@ -44,8 +44,8 @@ public class HangmanGame {
         return wrongGuesses.size();
     }
 
-    public String getHangman() {
-        return HangmanStage.get(getFailedAttemptCount());
+    public Set<Character> getWrongGuesses() {
+        return new LinkedHashSet<>(wrongGuesses);
     }
 
     public boolean isWin() {
@@ -78,70 +78,5 @@ public class HangmanGame {
 
     private boolean answerContainsLetter(char letter) {
         return answer.contains(String.valueOf(letter));
-    }
-
-    private static class HangmanStage {
-        private static final String[] STAGES = {
-                """
-              +---+
-              |   |
-                  |
-                  |
-                  |
-                  |
-            =========""",
-                """
-              +---+
-              |   |
-              O   |
-                  |
-                  |
-                  |
-            =========""",
-                """
-              +---+
-              |   |
-              O   |
-              |   |
-                  |
-                  |
-            =========""",
-                """
-              +---+
-              |   |
-              O   |
-             /|   |
-                  |
-                  |
-            =========""",
-                """
-              +---+
-              |   |
-              O   |
-             /|\\  |
-                  |
-                  |
-            =========""",
-                """
-              +---+
-              |   |
-              O   |
-             /|\\  |
-             /    |
-                  |
-            =========""",
-                """
-              +---+
-              |   |
-              O   |
-             /|\\  |
-             / \\  |
-                  |
-            ========="""
-        };
-
-        private static String get(int countError) {
-            return STAGES[countError];
-        }
     }
 }

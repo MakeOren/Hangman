@@ -1,6 +1,7 @@
 package io.github.MakeOren;
 
 import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,22 +44,11 @@ public class HangmanConsole {
         }
     }
 
-    public static void printState(String hangman, String hint, int failedAttemptCount) {
-        printHangman(hangman);
-        printHint(hint);
-        printFailedAttemptCount(failedAttemptCount);
-    }
-
-    public static void printHint(String hint) {
-        System.out.println("Подсказка: " + hint);
-    }
-
-    public static void printFailedAttemptCount(int failedAttemptCount) {
-        System.out.println("Количество ошибочных попыток: " + failedAttemptCount);
-    }
-
-    public static void printHangman(String hangman) {
-        System.out.println(hangman);
+    public static void printState(GameState state) {
+        printHangman(state.getPicture());
+        printHint(state.getHint());
+        printFailedAttemptCount(state.getFailedAttemptCount());
+        printWrongGuesses(state.getWrongGuesses());
     }
 
     public static void printWin(String answer) {
@@ -89,4 +79,19 @@ public class HangmanConsole {
         return matcher.matches();
     }
 
+    private static void printHint(String hint) {
+        System.out.println("Подсказка: " + hint);
+    }
+
+    private static void printFailedAttemptCount(int failedAttemptCount) {
+        System.out.println("Количество ошибочных попыток: " + failedAttemptCount);
+    }
+
+    private static void printHangman(String hangman) {
+        System.out.println(hangman);
+    }
+
+    private static void printWrongGuesses(Set<Character> wrongGuesses) {
+        System.out.println("Неверные буквы: " + wrongGuesses);
+    }
 }

@@ -9,15 +9,13 @@ import java.util.List;
 import java.util.Locale;
 
 public class HangmanDictionary {
-    private static final int MIN_WORD_LENGTH = 5;
-    private static final int MAX_WORD_LENGTH = 9;
 
-    public static List<String> getDictionary(String path) {
+    public static List<String> getDictionary(String path, int minWordLength, int maxWordLength) {
         List<String> words = loadDictionary(path);
 
         return words.stream()
                 .map(word-> word.trim().toLowerCase(Locale.ROOT))
-                .filter(word-> word.length() >= MIN_WORD_LENGTH && word.length() <= MAX_WORD_LENGTH)
+                .filter(word-> word.length() >= minWordLength && word.length() <= maxWordLength)
                 .toList();
     }
 
